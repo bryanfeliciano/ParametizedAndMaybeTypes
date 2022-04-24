@@ -1,17 +1,20 @@
 import qualified Data.Map as Map
 
-data Organ = Heart | Brain | Kidney | Spleen deriving (Show , Eq)
+data Organ = Heart | Brain | Kidney | Spleen deriving (Show , Eq , Ord , Enum)
 
-organs:: [Organ]
-organs = [Heart,Heart,Brain,Spleen,Spleen,Kidney]
+allOrgans:: [Organ]
+allOrgans = [Heart ..Kidney]
 
 ids:: [Int]
 ids = [2,7,13,14,21,24]
 
+values :: [Organ]
+values = map snd (Map.toList organCatalog)
+
 -- Organ pairs created by using zip --
 
 organPairs :: [(Int,Organ)]
-organPairs = zip ids organs
+organPairs = zip ids allOrgans
 
 -- Put together an organ catalog --
 
@@ -48,10 +51,10 @@ third (Triple _ _ x) = x
 
 data Box a = Box a deriving Show
 
-wrap:: a -> Box
+wrap:: a -> Box a
 wrap x = Box x
 
-unWrap :: Box -> x
+unWrap :: Box a -> a
 unWrap (Box x) = x
 
 -- Chapter objective functions --
@@ -63,3 +66,14 @@ boxMap func (Box val) = Box (func val)
 
 tripleMap :: (a -> b) -> Triple a -> Triple b
 tripleMap func (Triple v1 v2 v3) = Triple (func v1) (func v2) (func v3)
+
+-- Q18.2 --
+
+organCounts :: [Int]
+organCounts = map countOrgan allOrgans
+   where
+       countOrgan = (\organ->
+                      (length. filter (== organ))values)
+
+organInventory :: Map.Map Organ Int
+organInventory = Map.fromList (zip allOrgans organCounts)
