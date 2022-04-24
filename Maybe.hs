@@ -4,6 +4,8 @@ data Organ = Heart | Brain | Kidney | Spleen deriving (Show , Eq , Ord , Enum)
 
 data Container = Vat Organ | Cooler Organ | Bag Organ
 
+data Location = Lab | Kitchen | Bathroom deriving Show
+
 allOrgans:: [Organ]
 allOrgans = [Heart ..Kidney]
 
@@ -50,3 +52,21 @@ instance Show Container where
     show (Vat organ) = show organ ++ "In a vat"
     show (Cooler organ) = show organ ++ "In a cooler"
     show (Bag organ) = show organ ++ "In a bag"
+
+organToContainer :: Organ -> Container
+organToContainer Brain = Vat Brain
+organToContainer Heart = Cooler Heart
+organToContainer organ = Bag organ
+
+placeInLocation :: Container -> (Location,Container)
+placeInLocation (Vat a) = (Lab, Vat a)
+placeInLocation (Cooler a) = (Lab, Cooler a)
+placeInLocation (Bag a) = (Kitchen, Bag a)
+
+process :: Organ -> (Location,Container)
+process organ = placeInLocation (organToContainer organ)
+
+report :: (Location,Container) -> String
+report (location, container) = show container ++ "In the " ++ show location
+
+-- continue on 19.12 --
