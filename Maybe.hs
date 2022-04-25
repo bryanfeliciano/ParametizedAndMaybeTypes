@@ -39,6 +39,10 @@ isSomething :: Maybe Organ -> Bool
 isSomething Nothing = False
 isSomething (Just _) = True
 
+isNothing :: Maybe Organ -> Bool
+isNothing Nothing = True
+isNothing (Just _) = False
+
 justTheOrgans :: [Maybe Organ]
 justTheOrgans = filter isSomething availableOrgans
 
@@ -49,9 +53,9 @@ organList :: [String]
 organList = map showOrgan justTheOrgans
 
 instance Show Container where
-    show (Vat organ) = show organ ++ "In a vat"
-    show (Cooler organ) = show organ ++ "In a cooler"
-    show (Bag organ) = show organ ++ "In a bag"
+    show (Vat organ) = show organ ++ " In a vat "
+    show (Cooler organ) = show organ ++ " In a cooler "
+    show (Bag organ) = show organ ++ " In a bag "
 
 organToContainer :: Organ -> Container
 organToContainer Brain = Vat Brain
@@ -66,8 +70,9 @@ placeInLocation (Bag a) = (Kitchen, Bag a)
 process :: Organ -> (Location,Container)
 process organ = placeInLocation (organToContainer organ)
 
-report :: (Location,Container) -> String
-report (location, container) = show container ++ "In the " ++ show location
+report :: Maybe (Location,Container) -> String
+report Nothing = "Container not found "
+report (Just(location, container)) = show container ++ " In the " ++ show location
 
 processRequest :: Int -> Map.Map Int Organ -> String
 processRequest id catalog = processAndReport organ
@@ -76,3 +81,15 @@ processRequest id catalog = processAndReport organ
 processAndReport :: (Maybe Organ) -> String
 processAndReport (Just organ) = report (process organ)
 processAndReport Nothing = "enter, id not found"
+
+-- sample results only handles brain and spleen becase theyre the ones that are located in the lab -- 
+
+sampleResults :: [Maybe Organ]
+sampleResults = [(Just Brain),Nothing,Nothing,(Just Spleen)]
+
+emptyDrawers :: [Maybe Organ] -> Int
+emptyDrawers contents = (length.filter isNothing) contents
+
+maybeMap :: (a -> b) -> Maybe a -> Maybe b
+maybeMap func Nothing = Nothing
+maybeMap func (Just val) = Just (func val)
