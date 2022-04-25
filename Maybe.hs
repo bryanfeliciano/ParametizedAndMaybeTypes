@@ -69,4 +69,10 @@ process organ = placeInLocation (organToContainer organ)
 report :: (Location,Container) -> String
 report (location, container) = show container ++ "In the " ++ show location
 
--- continue on 19.12 --
+processRequest :: Int -> Map.Map Int Organ -> String
+processRequest id catalog = processAndReport organ
+  where organ = Map.lookup id catalog
+
+processAndReport :: (Maybe Organ) -> String
+processAndReport (Just organ) = report (process organ)
+processAndReport Nothing = "enter, id not found"
